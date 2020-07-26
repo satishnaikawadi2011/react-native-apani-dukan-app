@@ -1,10 +1,11 @@
 import React from 'react';
-import { FlatList, Text, Platform } from 'react-native';
+import { FlatList, Text, Platform, Button } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import ProductItem from '../../components/shops/ProductItem';
 import { addToCart } from '../../store/actions/cart';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import CustomHeaderButton from '../../components/UI/Header';
+import Colors from '../../constants/Colors';
 
 const ProductOverviewScreen = (props) => {
 	const products = useSelector((state) => state.products.availableProducts);
@@ -18,12 +19,26 @@ const ProductOverviewScreen = (props) => {
 					title={item.title}
 					image={item.imageUrl}
 					price={item.price}
-					onViewDetail={() =>
+					onSelect={() =>
 						props.navigation.navigate('ProductDetail', { productId: item.id, productTitle: item.title })}
-					onAddToCart={() => {
-						dispatch(addToCart(item));
-					}}
-				/>
+				>
+					<Button
+						color={Colors.primary}
+						title="View Details"
+						onPress={() =>
+							props.navigation.navigate('ProductDetail', {
+								productId    : item.id,
+								productTitle : item.title
+							})}
+					/>
+					<Button
+						color={Colors.primary}
+						title="To Cart"
+						onPress={() => {
+							dispatch(addToCart(item));
+						}}
+					/>
+				</ProductItem>
 			)}
 		/>
 	);
