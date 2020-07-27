@@ -1,18 +1,23 @@
 import React from 'react';
 
 import { createStackNavigator } from 'react-navigation-stack';
-import { createDrawerNavigator } from 'react-navigation-drawer';
-import { createAppContainer } from 'react-navigation';
+import { createDrawerNavigator, DrawerItems, DrawerNavigatorItems } from 'react-navigation-drawer';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import ProductOverviewScreen from '../screens/shop/ProductOverviewScreen';
 import Colors from '../constants/Colors';
-import { Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Platform, SafeAreaView, View, Button, Text } from 'react-native';
+import { Ionicons, AntDesign } from '@expo/vector-icons';
 import ProductDetailsScreen from '../screens/shop/ProductDetailsScreen';
 import CartScreen from '../screens/shop/CartScreen';
 import OrderScreen from '../screens/shop/OrdersScreen';
 import UserProductsScreen from '../screens/user/UserProductsScreen';
 import EditProductScreen from '../screens/user/EditProductScreen';
+import AuthScreen from '../screens/user/AuthScreen';
+import StartupScreen from '../screens/StartupScreen';
+import { useDispatch } from 'react-redux';
+import { logout } from '../store/actions/auth';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 const defaltNavOptions = {
 	headerStyle          : {
@@ -109,10 +114,46 @@ const ShopNavigator = createDrawerNavigator(
 		Admin    : AdminNavigator
 	},
 	{
-		contentOptions : {
+		contentOptions   : {
 			activeTintColor : Colors.primary
+		},
+		contentComponent : (props) => {
+			const dispatch = useDispatch();
+			return (
+				<View style={{ flex: 1, paddingTop: 30 }}>
+					<SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+						<DrawerNavigatorItems {...props} />
+						{/* <View > */}
+						<TouchableWithoutFeedback
+							style={{ alignItems: 'center', flexDirection: 'row', marginTop: 10 }}
+							onPress={() => {
+								dispatch(logout());
+								props.navigation.navigate('Auth');
+							}}
+						>
+							<AntDesign name="logout" size={24} color="black" style={{ marginLeft: 15 }} />
+							<Text style={{ fontFamily: 'ubuntu-bold', marginLeft: 28 }}>Logout</Text>
+						</TouchableWithoutFeedback>
+					</SafeAreaView>
+				</View>
+			);
 		}
 	}
 );
 
-export default createAppContainer(ShopNavigator);
+const AuthNavigator = createStackNavigator(
+	{
+		Auth : AuthScreen
+	},
+	{
+		defaultNavigationOptions : defaltNavOptions
+	}
+);
+
+const MainNavigator = createSwitchNavigator({
+	Startup : StartupScreen,
+	Auth    : AuthNavigator,
+	Shop    : ShopNavigator
+});
+
+export default createAppContainer(MainNavigator);

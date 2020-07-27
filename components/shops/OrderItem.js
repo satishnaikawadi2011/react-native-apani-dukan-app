@@ -12,7 +12,11 @@ const OrderItem = (props) => {
 		<View style={styles.orderItem}>
 			<View style={styles.summary}>
 				<Text style={styles.amount}>${props.amount.toFixed(2)}</Text>
-				<Text style={styles.date}>{props.date}</Text>
+				<Text style={styles.date}>
+					{
+						typeof props.date === 'object' ? props.date.toLocaleDateString('en-US') :
+						props.date}
+				</Text>
 			</View>
 			<Button
 				color={Colors.primary}
